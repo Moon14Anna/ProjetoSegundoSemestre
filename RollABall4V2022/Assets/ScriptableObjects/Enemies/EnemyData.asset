@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19493a73574a4eb0a3c63b71687f97c4, type: 3}
   m_Name: EnemyData
   m_EditorClassIdentifier: 
-  moveSpeed: 0
-  maxHealthPoints: 0
+  moveSpeed: 2
+  maxHealthPoints: 100
   enemyMesh: {fileID: 0}
-  followDistance: 0
-  returnDistance: 0
-  attackDistance: 0
-  giveUpDistance: 0
+  followDistance: 10
+  returnDistance: 15
+  attackDistance: 3
+  giveUpDistance: 4

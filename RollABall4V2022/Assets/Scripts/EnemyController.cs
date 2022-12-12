@@ -37,6 +37,14 @@ public class EnemyController : MonoBehaviour
 
     private SphereCollider _sphereCollider;
 
+    private Transform _playerTransform;
+
+    private Transform _currentPatrolPoint;
+
+    private Transform _nextPatrolPoint;
+
+    private int _currentePatrolIndex;
+
     // Start is called before the first frame update
     private void Awake()
     {
@@ -60,21 +68,57 @@ public class EnemyController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void Start()
     {
-        
+        _currentePatrolIndex = 0;
+        _currentPatrolPoint = myPatrolRoute.patrolRoutePoints[_currentePatrolIndex];
     }
-    
+
+    private void Update()
+    {
+        if (_enemyFSM.GetCurrentAnimatorStateInfo(0).IsName("Return"))
+        {
+            _enemyFSM.SetFloat("ReturnDistance",
+            Vector3.Distance(transform.position, _currentPatrolPoint.position));
+        }
+    }
+
     public void SetSphereRadius(float value)
     {
         _sphereCollider.radius = value;
+    }
+
+    public void SetDestinationToPlayer()
+    {
+        //transform.position += (_playerTransform.position - transform.position).normalized * _moveSpeed * Time.deltaTime;
+        _navMeshAgent.SetDestination(_playerTransform.position);
+    }
+
+    public void SetDestinationToPatrol()
+    {
+        _navMeshAgent.SetDestination(_currentPatrolPoint.position);
+    }
+
+    public void ResetPlayerTransform()
+    {
+        _playerTransform = null;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
+            _playerTransform = other.transform;
+            _enemyFSM.SetTrigger("OnPlayerEntered");
             Debug.Log("Jogador entrou na área");
         }
     }
+
+    private void OnTriggerExit(Collider other)
+    {
+        
+        _enemyFSM.SetTrigger("OnPlayerExited");
+        Debug.Log("Jogador saiu da área");
+    }
+    
 }
