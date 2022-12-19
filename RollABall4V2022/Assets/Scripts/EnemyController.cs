@@ -66,13 +66,33 @@ public class EnemyController : MonoBehaviour
         _sphereCollider = GetComponent<SphereCollider>();
 
     }
-
-    // Update is called once per frame
+    
     void Start()
     {
         _currentePatrolIndex = 0;
         _currentPatrolPoint = myPatrolRoute.patrolRoutePoints[_currentePatrolIndex];
     }
+    
+    public void Patrulha()
+    {
+        if (myPatrolRoute.patrolRoutePoints.Count > 0)
+        {
+            _navMeshAgent.destination = myPatrolRoute.patrolRoutePoints[_currentePatrolIndex].position;
+            _currentePatrolIndex++;
+
+            if (_currentePatrolIndex == myPatrolRoute.patrolRoutePoints.Count)
+            {
+                _currentePatrolIndex = 0;
+            }
+        }
+
+        else
+        {
+            return;
+        }
+    }
+
+    // Update is called once per frame
 
     private void Update()
     {
@@ -92,6 +112,7 @@ public class EnemyController : MonoBehaviour
     {
         //transform.position += (_playerTransform.position - transform.position).normalized * _moveSpeed * Time.deltaTime;
         _navMeshAgent.SetDestination(_playerTransform.position);
+        _currentePatrolIndex = 0;
     }
 
     public void SetDestinationToPatrol()
