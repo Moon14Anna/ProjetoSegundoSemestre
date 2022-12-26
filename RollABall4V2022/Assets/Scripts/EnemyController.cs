@@ -69,40 +69,40 @@ public class EnemyController : MonoBehaviour
     
     void Start()
     {
-        _currentePatrolIndex = 0;
-        _currentPatrolPoint = myPatrolRoute.patrolRoutePoints[_currentePatrolIndex];
+        _currentePatrolIndex = 0; //define a primeira posição da patrulha
+        _currentPatrolPoint = myPatrolRoute.patrolRoutePoints[_currentePatrolIndex]; //define onde encontrar os pontos (na lista)
     }
-    
-    public void Patrulha()
+
+    public void Patrulhar()
     {
-        if (myPatrolRoute.patrolRoutePoints.Count > 0)
-        {
-            _navMeshAgent.destination = myPatrolRoute.patrolRoutePoints[_currentePatrolIndex].position;
-            _currentePatrolIndex++;
+        _navMeshAgent.destination = myPatrolRoute.patrolRoutePoints[_currentePatrolIndex].position; //diz onde o inimigo vai encontrar o destino dele
+        _currentePatrolIndex++; //adiciona mais um, para passar para o próximo ponto da lista
 
-            if (_currentePatrolIndex == myPatrolRoute.patrolRoutePoints.Count)
-            {
-                _currentePatrolIndex = 0;
-            }
+        if (_currentePatrolIndex == 4) //faz com que ao chegar no último ponto, volte para o primeiro
+        { 
+            _currentePatrolIndex = 0;
         }
 
-        else
-        {
-            return;
-        }
     }
 
     // Update is called once per frame
-
-    private void Update()
+    void Update()
     {
         if (_enemyFSM.GetCurrentAnimatorStateInfo(0).IsName("Return"))
         {
-            _enemyFSM.SetFloat("ReturnDistance",
-            Vector3.Distance(transform.position, _currentPatrolPoint.position));
+            _enemyFSM.SetFloat("ReturnDistance", 
+                Vector3.Distance(transform.position, _currentPatrolPoint.position));
+        }
+
+        if (_enemyFSM.GetCurrentAnimatorStateInfo(0).IsName("Patrol")) //checa se ele está patrulhando ou não
+        {
+            if (_navMeshAgent.remainingDistance < 0.1f) //verifica distância entre o inimigo e o ponto de destino 
+            {
+                Patrulhar();
+            }
         }
     }
-
+    
     public void SetSphereRadius(float value)
     {
         _sphereCollider.radius = value;
